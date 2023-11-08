@@ -25,10 +25,14 @@ export default {
         const skip = (page - 1) * perPage;
 
         try {
-            const users = await UserRepository.retrieveAll(skip, perPage);
+            const [users, total] =
+                await UserRepository.retrieveAllWithPagination(skip, perPage);
 
             return res.status(200).json({
                 users,
+                total,
+                page,
+                perPage,
             });
         } catch (error: any) {
             return next(error);

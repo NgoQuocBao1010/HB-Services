@@ -52,17 +52,6 @@ class BaseError extends Error {
     }
 }
 
-class APIError extends BaseError {
-    constructor(
-        name: string,
-        httpCode = HttpStatusCode.INTERNAL_SERVER,
-        isOperational = true,
-        description = "internal server error"
-    ) {
-        super(name, httpCode, isOperational, description);
-    }
-}
-
 class HTTP400Error extends BaseError {
     constructor(description = "bad request") {
         super("BAD REQUEST", HttpStatusCode.BAD_REQUEST, true, description);
@@ -80,17 +69,10 @@ class HTTP500Error extends BaseError {
         super(
             "INTERNAL SERVER",
             HttpStatusCode.INTERNAL_SERVER,
-            true,
+            false,
             description
         );
     }
 }
 
-export {
-    APIError,
-    BaseError,
-    DatabaseError,
-    HTTP400Error,
-    HTTP404Error,
-    HTTP500Error,
-};
+export { BaseError, DatabaseError, HTTP400Error, HTTP404Error, HTTP500Error };

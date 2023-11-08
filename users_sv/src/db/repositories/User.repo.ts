@@ -19,6 +19,18 @@ const UserRepository = AppDataSource.getRepository(User).extend({
             },
         });
     },
+    retrieveAllWithPagination: async function (
+        skip: number = 0,
+        take: number = 100
+    ) {
+        return await this.findAndCount({
+            skip,
+            take,
+            order: {
+                createdAt: "DESC",
+            },
+        });
+    },
     retrieveById: async function (id: string) {
         try {
             return await this.findOneByOrFail({ id });
