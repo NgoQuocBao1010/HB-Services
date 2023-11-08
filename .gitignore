@@ -1,0 +1,11 @@
+# JS/TS
+**/node_modules
+
+# Python
+**/env
+
+# Others
+.env
+.DS_Store
+
+/.vscode
