@@ -1,11 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 
-import type { CreateUserRequestBody } from "../../schemas/user.schema";
+import type {
+    CreateUserRequestBody,
+    UpdateUserRequestBody,
+} from "../../schemas/user.schema";
 import type { PaginationRequestQuery } from "../../types";
 
 import UserRepository from "../../db/repositories/User.repo";
 import { validateRequestPayloadSchema } from "../../helpers/utils";
-import { createUserBodySchema } from "../../schemas/user.schema";
+import {
+    createUserBodySchema,
+    updateUserBodySchema,
+} from "../../schemas/user.schema";
 
 export default {
     getAll: async (
@@ -75,6 +81,46 @@ export default {
 
             return res.status(201).json({
                 user,
+            });
+        } catch (error: any) {
+            return next(error);
+        }
+    },
+    edit: async (
+        req: Request<{ id: string }, {}, UpdateUserRequestBody>,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { id } = req.params;
+
+            const payload = validateRequestPayloadSchema(
+                updateUserBodySchema,
+                req.body
+            );
+
+            const user = await UserRepository.edit(id, payload);
+
+            return res.status(200).json({
+                user,
+            });
+        } catch (error: any) {
+            return next(error);
+        }
+    },
+    delete: async (
+        req: Request<{ id: string }>,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { id } = req.params;
+
+            const deletedRows = await UserRepository.deleteById(id);
+
+            return res.status(200).json({
+                message: "Delete successfully",
+                deletedRows,
             });
         } catch (error: any) {
             return next(error);

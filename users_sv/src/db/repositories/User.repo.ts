@@ -1,8 +1,9 @@
-import { FindOptionsWhere, In, IsNull, Not } from "typeorm";
+import type {
+    CreateUserRequestBody,
+    UpdateUserRequestBody,
+} from "../../schemas/user.schema";
 
-import type { CreateUserRequestBody } from "../../schemas/user.schema";
-
-import { DatabaseError, DatabaseErrorType } from "../../errors/AppErrors";
+import { DatabaseErrorType } from "../../errors/AppErrors";
 import { handleSqliteErrors } from "../../errors/errorHandler";
 import { AppDataSource } from "../AppDataSource";
 import { User } from "../entities/User.entity";
@@ -66,6 +67,25 @@ const UserRepository = AppDataSource.getRepository(User).extend({
 
             throw err;
         }
+    },
+    edit: async function (id: string, userData: UpdateUserRequestBody) {
+        const user = await this.retrieveById(id);
+
+        user.displayName = userData.displayName ?? user.displayName;
+        user.gender = userData.gender ?? user.gender;
+        user.address = userData.address ?? user.address;
+        user.age = userData.age ?? user.age;
+
+        await user.save();
+
+        return user;
+    },
+
+    // ** Delete ** \\
+    deleteById: async function (id: string) {
+        const { affected: deletedRows } = await this.delete(id);
+
+        return deletedRows || 0;
     },
 });
 
