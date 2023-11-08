@@ -5,6 +5,31 @@ export enum HttpStatusCode {
     INTERNAL_SERVER = 500,
 }
 
+export enum DatabaseErrorType {
+    UNIQUE = "unique",
+    NOT_FOUND = "not found",
+}
+
+class DatabaseError extends Error {
+    public readonly name: DatabaseErrorType;
+    public detail?: string;
+
+    constructor(name: DatabaseErrorType, message: string, detail?: string) {
+        super(message);
+
+        this.name = name;
+        this.detail = detail;
+
+        Error.captureStackTrace(this);
+    }
+
+    setDetail(detail: string) {
+        this.detail = detail;
+
+        return this;
+    }
+}
+
 class BaseError extends Error {
     public readonly name: string;
     public readonly httpCode: HttpStatusCode;
@@ -61,4 +86,11 @@ class HTTP500Error extends BaseError {
     }
 }
 
-export { APIError, BaseError, HTTP400Error, HTTP404Error, HTTP500Error };
+export {
+    APIError,
+    BaseError,
+    DatabaseError,
+    HTTP400Error,
+    HTTP404Error,
+    HTTP500Error,
+};

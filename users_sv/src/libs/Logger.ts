@@ -2,7 +2,7 @@ import { Request } from "express";
 import winston from "winston";
 
 import env from "../constants/env";
-import { BaseError } from "../errors/AppError";
+import { BaseError } from "../errors/AppErrors";
 import { stringifyError } from "../errors/errorHandler";
 
 const levels = {

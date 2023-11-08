@@ -1,16 +1,18 @@
 import bodyParser from "body-parser";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
+import "reflect-metadata";
 
 import env from "./constants/env";
-import {
-    APIError,
-    BaseError,
-    HTTP404Error,
-    HTTP500Error,
-} from "./errors/AppError";
+import { connectToDB } from "./db/AppDataSource";
+import { BaseError, HTTP404Error, HTTP500Error } from "./errors/AppErrors";
+import { dbErrorToHttpError, handleSqliteErrors } from "./errors/errorHandler";
 import Logger from "./libs/Logger";
-import morganMiddleware from "./middlewares/morganLogger";
+import routersHandler from "./routers";
+import morganMiddleware from "./routers/middlewares/morganLogger";
+
+// ** Try connect to SQLite
+connectToDB();
 
 const app = express();
 app.use(cors());
@@ -33,10 +35,8 @@ app.get("/api/health-check", async (_: Request, res: Response) => {
     });
 });
 
-// ** Wrong path handler
-app.get("/api/error", (req, _, next) => {
-    next(new Error("My intentional error"));
-});
+// ** Router handlers
+routersHandler(app);
 
 // ** Wrong path handler
 app.all("*", (req, _, next) => {
@@ -48,20 +48,24 @@ app.all("*", (req, _, next) => {
 // ** Global error handler
 app.use(
     (err: BaseError | Error, req: Request, res: Response, _: NextFunction) => {
-        const isCaughtError = err instanceof BaseError;
+        const error = dbErrorToHttpError(err);
 
-        const httpCode = isCaughtError ? err.httpCode : 500;
-        const resError = isCaughtError ? err : new HTTP500Error();
+        const isCaughtError = error instanceof BaseError;
+
+        const httpCode = isCaughtError ? error.httpCode : 500;
+        let resError = isCaughtError ? error : new HTTP500Error();
 
         if (!isCaughtError) {
-            Logger.error(err);
+            if (error instanceof SyntaxError && "body" in error)
+                resError = new HTTP404Error("Invalid JSON body");
+
+            Logger.error(error);
         }
 
         Logger.apiError(req, resError);
         return res.status(httpCode).json({
             message: resError.message,
             error: resError,
-            stack: env.SERVER_ENV !== "production" ? resError.stack : undefined,
         });
     }
 );
