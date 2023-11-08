@@ -2,6 +2,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import express, { Request, Response } from "express";
 
+import env from "./constants/env";
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json({ limit: "10mb" }));
@@ -21,7 +23,7 @@ app.get("/api/health-check", async (_: Request, res: Response) => {
     });
 });
 
-const port = 3000;
+const port = env.SERVER_PORT;
 app.listen(port, () => {
     console.log(`Server is live: http://localhost:${port}`);
 });
