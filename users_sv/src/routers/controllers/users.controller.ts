@@ -19,10 +19,42 @@ export default {
         const skip = (page - 1) * perPage;
 
         try {
-            const users = await UserRepository.findAll(skip, perPage);
+            const users = await UserRepository.retrieveAll(skip, perPage);
 
             return res.status(200).json({
                 users,
+            });
+        } catch (error: any) {
+            return next(error);
+        }
+    },
+    getById: async (
+        req: Request<{ id: string }>,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { id } = req.params;
+            const user = await UserRepository.retrieveById(id);
+
+            return res.status(200).json({
+                user,
+            });
+        } catch (error: any) {
+            return next(error);
+        }
+    },
+    getByEmail: async (
+        req: Request<{ email: string }>,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            const { email } = req.params;
+            const user = await UserRepository.retrieveByEmail(email);
+
+            return res.status(200).json({
+                user,
             });
         } catch (error: any) {
             return next(error);

@@ -1,4 +1,4 @@
-import { QueryFailedError } from "typeorm";
+import { EntityNotFoundError, QueryFailedError } from "typeorm";
 
 import {
     BaseError,
@@ -40,6 +40,10 @@ export const handleSqliteErrors = (err: any) => {
     switch (err.code) {
         case "SQLITE_CONSTRAINT":
             return new DatabaseError(DatabaseErrorType.UNIQUE, err.message);
+    }
+
+    if (err instanceof EntityNotFoundError) {
+        return new DatabaseError(DatabaseErrorType.NOT_FOUND, err.message);
     }
 
     throw new Error("Error while interact to Database");
