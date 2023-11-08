@@ -1,5 +1,6 @@
 # JS/TS
 **/node_modules
+**/build
 
 # Python
 **/env
