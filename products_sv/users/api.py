@@ -13,7 +13,7 @@ from .schema import (
 )
 
 router = Router()
-userServiceProxy = UserServicesProxy("http://0.0.0.0:9000")
+userServiceProxy = UserServicesProxy("http://nodejs_sv:9000")
 
 standardResponse = {
     200: UserInfoResponse,

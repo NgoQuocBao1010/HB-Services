@@ -1,0 +1,8 @@
+env
+.dockerignore
+Dockerfile
+.git
+.gitignore
+.pytest_cache
+.github
+db.sqlite3

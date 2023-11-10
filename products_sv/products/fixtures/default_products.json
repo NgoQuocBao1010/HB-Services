@@ -1,0 +1,26 @@
+[
+    {
+        "model": "products.Product",
+        "fields": {
+            "name": "Samsung Galaxy S21",
+            "description": "A powerful Android smartphone from Samsung.",
+            "price": "899.99"
+        }
+    },
+    {
+        "model": "products.Product",
+        "fields": {
+            "name": "iPhone 13",
+            "description": "The latest iPhone model with advanced features.",
+            "price": "1099.99"
+        }
+    },
+    {
+        "model": "products.Product",
+        "fields": {
+            "name": "Google Pixel 6",
+            "description": "Google's flagship phone with a stunning camera.",
+            "price": "799.99"
+        }
+    }
+]

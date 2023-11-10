@@ -34,7 +34,7 @@ app.use(
     "/api/docs",
     swaggerUiExpress.serve,
     swaggerUiExpress.setup(swaggerSchema, {
-        customSiteTitle: "DID Controller",
+        customSiteTitle: "Node.js Server",
     })
 );
 

@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+    nodejs_sv:
+        build:
+            context: ./users_sv
+        command: npm start
+        container_name: nodejs_sv
+        ports:
+            - "9000:9000"
+        networks:
+            - mynetwork
+
+    django_sv:
+        build:
+            context: ./products_sv
+        command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+        container_name: django_sv
+        ports:
+            - "8000:8000"
+        depends_on:
+            - nodejs_sv
+        networks:
+            - mynetwork
+
+networks:
+    mynetwork:
+        driver: bridge

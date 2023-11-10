@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node ./build/src/server.js",
+        "pre-start": "npm run build && cp -i ./.env ./build/.env",
         "build": "rm -rf build && tsc -p .",
         "start:dev": "nodemon -w . -w .env --exec node --loader ts-node/esm ./src/server.ts"
     },
