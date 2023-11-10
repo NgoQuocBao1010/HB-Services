@@ -1,4 +1,4 @@
-# SERVERS GUID
+# SERVERS GUIDE
 
 ## Requirements
 
