@@ -9,11 +9,15 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 export interface ENV {
     SERVER_ENV: string;
     SERVER_PORT: number;
+    // RabbitMQ config
+    RABBITMQ_URL: string;
 }
 
 const env: ENV = cleanEnv(process.env, {
     SERVER_ENV: str({ choices: ["dev", "test", "production", "staging"] }),
     SERVER_PORT: port({ default: 9000 }),
+    // RabbitMQ config
+    RABBITMQ_URL: str(),
 });
 
 export default env;

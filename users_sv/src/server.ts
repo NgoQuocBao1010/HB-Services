@@ -9,6 +9,7 @@ import { connectToDB } from "./db/AppDataSource";
 import { BaseError, HTTP404Error, HTTP500Error } from "./errors/AppErrors";
 import { dbErrorToHttpError } from "./errors/errorHandler";
 import Logger from "./libs/Logger";
+import getChannel from "./messages/RabbitMQ";
 import routersHandler from "./routers";
 import morganMiddleware from "./routers/middlewares/morganLogger";
 import swaggerSchema from "./schemas/swagger.schema";
@@ -27,8 +28,6 @@ app.use(
     })
 );
 
-app.use(morganMiddleware);
-
 // ** Swagger
 app.use(
     "/api/docs",
@@ -38,13 +37,48 @@ app.use(
     })
 );
 
+app.use(morganMiddleware);
+
 // ** Health Check Endpoint
 app.get("/api/health-check", async (_: Request, res: Response) => {
     return res.status(200).json({
-        name: "Node.js Express server",
+        name: "User API server",
         version: "v1.0.0",
     });
 });
+
+//
+app.get(
+    "/api/rabbit-mq/test",
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const data = {
+                message: "Hello from user service" + Date.now(),
+            };
+            let dataFromMQ;
+
+            const channel = getChannel();
+
+            channel.sendToQueue("USERS", Buffer.from(JSON.stringify(data)));
+
+            await channel.consume("USERS_2", (data) => {
+                try {
+                    console.log("Data from users 2");
+                    channel.ack(data!);
+                    dataFromMQ = JSON.parse(data?.content.toString() || "null");
+
+                    console.log(res.getHeaders());
+                    res.json({ data: dataFromMQ, code: 200 });
+                    channel.close();
+                } catch (error) {
+                    next(error);
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 // ** Router handlers
 routersHandler(app);

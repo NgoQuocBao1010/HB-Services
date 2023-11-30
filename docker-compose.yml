@@ -1,25 +1,42 @@
 version: "3.8"
 
 services:
-    nodejs_sv:
+    users_sv:
         build:
             context: ./users_sv
-        command: npm start
-        container_name: nodejs_sv
+        container_name: users_sv
+        image: users_sv
+        depends_on:
+            - rabbitmq
+        environment:
+            - RABBITMQ_URL=amqp://rabbitmq:5672
+        command: npm run start:dev
         ports:
             - "9000:9000"
+        volumes:
+            - ./users_sv/src:/usr/src/app/src
         networks:
             - mynetwork
 
-    django_sv:
+    products_sv:
         build:
             context: ./products_sv
         command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
-        container_name: django_sv
+        container_name: products_sv
+        image: products_sv
         ports:
             - "8000:8000"
         depends_on:
-            - nodejs_sv
+            - users_sv
+        networks:
+            - mynetwork
+
+    rabbitmq:
+        image: rabbitmq:3.8-management-alpine
+        container_name: "rabbitmq"
+        ports:
+            - 5672:5672
+            - 15672:15672
         networks:
             - mynetwork
 

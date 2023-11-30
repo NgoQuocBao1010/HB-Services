@@ -1,7 +1,7 @@
 export default {
     openapi: "3.0.0",
     info: {
-        title: "Node.js server",
+        title: "User API server",
         version: "v1.0",
     },
     servers: [
@@ -20,7 +20,7 @@ export default {
         "/users": {
             get: {
                 tags: ["USER"],
-                summary: "Retrieve all users - with pagination.",
+                summary: "Retrieve all users' info - with pagination.",
                 parameters: [
                     {
                         name: "page",
